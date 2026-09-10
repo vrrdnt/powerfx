@@ -43,6 +43,7 @@ export function print(tokens: Token[], source: string, options: FormatOptions, c
         if (options.preserveBlankLines && /\r?\n[\t ]*\r?\n/.test(gap)) result.push(hard, hard);
         else if (needsSpace(prev, item)) result.push(' ');
       }
+      else if (prev && options.preserveBlankLines && /\r?\n[\t ]*\r?\n/.test(source.slice(last(prev).to, t.from))) result.push(hard);
       separated = false;
       if (item.children) {
         const open = item.open!.text, close = item.close!.text;
@@ -51,7 +52,8 @@ export function print(tokens: Token[], source: string, options: FormatOptions, c
         const call = open === '(' && !!prev && ['word', 'identifier'].includes(last(prev).kind);
         const record = open === '{';
         const expanded = options.preset === 'expanded' || options.preset === 'custom' && (record ? options.recordLayout : options.argumentLayout) === 'expanded';
-        const forced = expanded && !isLookup && (call || record || open === '[');
+        const semanticCall = options.preset === 'adaptive' && call && ['If', 'Switch', 'With', 'Patch', 'ForAll', 'Concurrent'].includes(last(prev).text) && item.children.some(child => child.children);
+        const forced = !isLookup && (semanticCall || expanded && (call || record || open === '['));
         const boundary = record ? line : soft;
         const content = docs(item.children, open);
         result.push(group([open, indent([boundary, ...content]), boundary, close], forced));
