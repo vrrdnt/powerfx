@@ -22,6 +22,7 @@ const formulas = [
   'Double(x: Number): Number = x * 2; Greet(name: Text): Text = "Hi " & name;',
   'Save(x: Number): Void = { Set(value,x); Notify("Saved"); };',
   'Person := Type({Name:Text,Age:Number});',
+  'MakePerson(name:Text):Person = {Name:name,Age:25};',
   'Empty = {}; Items = [];',
 ];
 describe('Power Apps formatter', () => {

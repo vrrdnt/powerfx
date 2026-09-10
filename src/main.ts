@@ -25,7 +25,7 @@ let sample = true,
   generation = 0;
 let timer: ReturnType<typeof setTimeout> | undefined,
   timeout: ReturnType<typeof setTimeout> | undefined;
-let worker: Worker,
+let worker: Worker | undefined,
   lastResult: FormatResult | null = null,
   toastTimer: ReturnType<typeof setTimeout>;
 $('#app').innerHTML = shell;
@@ -52,26 +52,36 @@ function setStatus(message: string, kind = '') {
 }
 function makeWorker() {
   worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
+  const instance = worker;
   worker.onmessage = (event) => {
-    if (event.data.id !== generation) return;
+    if (instance !== worker || event.data.id !== generation) return;
+    busy = false;
     clearTimeout(timeout);
     $('#cancel').hidden = true;
     accept(event.data.result);
   };
   worker.onerror = () => {
+    if (instance !== worker) return;
     invalidate();
     setStatus('Worker stopped. Press Format to retry.', 'error');
     $('#ready-badge').textContent = 'ERROR';
     $('#cancel').hidden = true;
-    worker.terminate();
-    makeWorker();
+    worker?.terminate();
+    worker = undefined;
   };
 }
+let busy = false;
 function invalidate() {
+  if (busy) {
+    worker?.terminate();
+    worker = undefined;
+    busy = false;
+  }
   generation++;
   lastResult = null;
   $('#copy').setAttribute('disabled', '');
   $('#download').setAttribute('disabled', '');
+  $('#cancel').hidden = true;
   clearTimeout(timeout);
 }
 function changed() {
@@ -95,11 +105,11 @@ function run() {
   setStatus('Formatting…');
   $('#ready-badge').textContent = 'WORKING';
   $('#cancel').hidden = false;
-  worker.postMessage({ id, source: doc(), options: settings });
+  if (!worker) makeWorker();
+  busy = true;
+  worker!.postMessage({ id, source: doc(), options: settings });
   timeout = setTimeout(() => {
     if (id !== generation) return;
-    worker.terminate();
-    makeWorker();
     invalidate();
     $('#cancel').hidden = true;
     $('#ready-badge').textContent = 'TIMEOUT';
@@ -251,8 +261,6 @@ function layout() {
 $('#format').onclick = run;
 $('#cancel').onclick = () => {
   clearTimeout(timer);
-  worker.terminate();
-  makeWorker();
   invalidate();
   $('#cancel').hidden = true;
   $('#ready-badge').textContent = 'CANCELLED';

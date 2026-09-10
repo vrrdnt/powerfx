@@ -1,0 +1,24 @@
+{
+  "runtime": "v24.13.1",
+  "platform": "win32",
+  "cpu": "AMD Ryzen 7 7840HS w/ Radeon 780M Graphics     ",
+  "measuredAt": "2026-09-10T01:15:09.887Z",
+  "method": "One warm-up, seven runs, Adaptive preset. Worker computation only; editor rendering excluded.",
+  "results": [
+    {
+      "characters": 10048,
+      "medianMs": 2.64,
+      "maxMs": 5.99
+    },
+    {
+      "characters": 100032,
+      "medianMs": 19.84,
+      "maxMs": 28.5
+    },
+    {
+      "characters": 500032,
+      "medianMs": 116.95,
+      "maxMs": 149.52
+    }
+  ]
+}

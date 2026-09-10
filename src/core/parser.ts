@@ -163,7 +163,7 @@ export function validate(tokens: Token[], source: string, locale: Locale, cloud 
       need(':');
       type();
       need('=');
-      if (eat('{')) {
+      if (at('{') && ts[pos + 2]?.text !== ':' && eat('{')) {
         if (!at('}')) sequence();
         need('}');
       } else expression();
