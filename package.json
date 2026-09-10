@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "bench": "vitest bench --run",
+    "bench": "tsx tools/benchmark.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -28,6 +28,8 @@
   "devDependencies": {
     "@playwright/test": "^1.55.0",
     "@types/node": "^24.0.0",
+    "prettier": "^3.9.6",
+    "tsx": "^4.23.13",
     "typescript": "^5.9.2",
     "vite": "^7.1.0",
     "vitest": "^4.1.11"

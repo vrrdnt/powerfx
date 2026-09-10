@@ -12,10 +12,40 @@ export interface FormatOptions {
   recordLayout: 'auto' | 'expanded';
   preserveBlankLines: boolean;
 }
-export interface Diagnostic { from: number; to: number; message: string; severity: 'error' | 'warning' }
-export interface OutlineEntry { label: string; from: number; to: number }
-export interface FormatResult { text: string; diagnostics: Diagnostic[]; durationMs: number; outline: OutlineEntry[] }
-export const defaults: FormatOptions = { mode: 'powerapps', preset: 'adaptive', indentSize: 4, useTabs: false, printWidth: 100, locale: 'dot', argumentLayout: 'auto', recordLayout: 'auto', preserveBlankLines: true };
+export interface Diagnostic {
+  from: number;
+  to: number;
+  message: string;
+  severity: 'error' | 'warning';
+}
+export interface OutlineEntry {
+  label: string;
+  from: number;
+  to: number;
+}
+export interface FormatResult {
+  text: string;
+  diagnostics: Diagnostic[];
+  durationMs: number;
+  outline: OutlineEntry[];
+}
+export const defaults: FormatOptions = {
+  mode: 'powerapps',
+  preset: 'adaptive',
+  indentSize: 4,
+  useTabs: false,
+  printWidth: 100,
+  locale: 'dot',
+  argumentLayout: 'auto',
+  recordLayout: 'auto',
+  preserveBlankLines: true,
+};
 export class SyntaxFailure extends Error {
-  constructor(message: string, public from: number, public to = from + 1) { super(message); }
+  constructor(
+    message: string,
+    public from: number,
+    public to = from + 1,
+  ) {
+    super(message);
+  }
 }
